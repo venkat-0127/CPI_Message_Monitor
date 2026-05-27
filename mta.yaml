@@ -1,0 +1,37 @@
+_schema-version: "3.1"
+ID: cpi-monitor-app
+version: 1.0.0
+description: SAP CPI Message Monitor
+
+modules:
+  - name: cpi-monitor-backend
+    type: nodejs
+    path: .
+    parameters:
+      buildpack: nodejs_buildpack
+      memory: 256M
+      disk-quota: 512M
+    properties:
+      CPI_TOKEN_URL: https://00b695f2trial.authentication.us10.hana.ondemand.com/oauth/token
+      CPI_CLIENT_ID: sb-3a6aef6d-29e1-4478-b7fb-aeb1eccff805!b649978|it!b26655
+      CPI_CLIENT_SECRET: 8b77ae3d-87d8-4787-b500-44102bee10bd$vE5BXlAPuQ7yZeFesGql0PdSAaIf5gMe5BdntvI7x84=
+      CPI_BASE_URL: https://00b695f2trial.it-cpitrial05.cfapps.us10-001.hana.ondemand.com
+    requires:
+      - name: cpi-monitoring-instance
+        parameters:
+          config:
+            xsuaa-service: cpi-credentials
+
+  - name: cpi-monitor-ui
+    type: html5
+    path: app/cpi-dashboard
+    build-parameters:
+      builder: custom
+      commands:
+        - npm run build
+
+resources:
+  - name: cpi-monitoring-instance
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: cpi-monitoring-instance

@@ -1,0 +1,37 @@
+{
+  "name": "cpi-monitor-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "cds watch"
+  },
+  "dependencies": {
+    "@sap/cds": "^9.9.1",
+    "@sapui5/distribution-metadata": "^1.148.0",
+    "axios": "^1.16.1",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.2",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2.4",
+    "@sap/cds-dk": "^9.9.1",
+    "@ui5/server": "^4.0.15"
+  },
+  "cds": {
+    "build": {
+      "target": "."
+    },
+    "requires": {
+      "cpi-service": {
+        "kind": "rest",
+        "impl": "srv/cpi-service.js"
+      }
+    },
+    "serve": {
+      "static": "./app"
+    }
+  }
+}

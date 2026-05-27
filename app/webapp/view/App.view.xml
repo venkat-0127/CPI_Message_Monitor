@@ -1,0 +1,311 @@
+<mvc:View
+  controllerName="com.company.cpimonitor.controller.App"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:l="sap.ui.layout"
+  xmlns:core="sap.ui.core"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  displayBlock="true">
+
+  <Page id="mainPage" showHeader="false" backgroundDesign="Solid">
+    <customHeader>
+      <Bar id="topBar" design="Header">
+        <contentLeft>
+          <Title id="appTitle" text="SAP CPI Message Monitor" level="H3"/>
+        </contentLeft>
+        <contentRight>
+          <Button id="refreshBtn" icon="sap-icon://refresh"
+            text="Refresh" type="Emphasized" press="onRefresh"/>
+          <Avatar id="avatar" initials="JD" displaySize="XS"
+            class="sapUiTinyMarginBegin"/>
+        </contentRight>
+      </Bar>
+    </customHeader>
+
+    <content>
+
+      <!-- KPI TILES -->
+      <HBox id="kpiRow" wrap="Wrap"
+        class="sapUiSmallMargin sapUiSmallMarginBottom">
+
+        <GenericTile id="t1" header="Total Messages"
+          class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+          <tileContent>
+            <TileContent id="tc1">
+              <content>
+                <NumericContent id="n1"
+                  value="{summary>/TOTAL}"
+                  valueColor="Good"
+                  withMargin="false"/>
+              </content>
+            </TileContent>
+          </tileContent>
+        </GenericTile>
+
+        <GenericTile id="t2" header="Completed"
+          class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+          <tileContent>
+            <TileContent id="tc2">
+              <content>
+                <NumericContent id="n2"
+                  value="{summary>/COMPLETED}"
+                  valueColor="Good"
+                  withMargin="false"/>
+              </content>
+            </TileContent>
+          </tileContent>
+        </GenericTile>
+
+        <GenericTile id="t3" header="Failed"
+          class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+          <tileContent>
+            <TileContent id="tc3">
+              <content>
+                <NumericContent id="n3"
+                  value="{summary>/FAILED}"
+                  valueColor="Critical"
+                  withMargin="false"/>
+              </content>
+            </TileContent>
+          </tileContent>
+        </GenericTile>
+
+        <GenericTile id="t4" header="Processing"
+          class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+          <tileContent>
+            <TileContent id="tc4">
+              <content>
+                <NumericContent id="n4"
+                  value="{summary>/PROCESSING}"
+                  valueColor="Neutral"
+                  withMargin="false"/>
+              </content>
+            </TileContent>
+          </tileContent>
+        </GenericTile>
+
+        <GenericTile id="t5" header="Retry / Escalation"
+          class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+          <tileContent>
+            <TileContent id="tc5">
+              <content>
+                <NumericContent id="n5"
+                  value="{summary>/RETRY}"
+                  valueColor="Critical"
+                  withMargin="false"/>
+              </content>
+            </TileContent>
+          </tileContent>
+        </GenericTile>
+
+      </HBox>
+
+      <!-- CHARTS ROW -->
+      <HBox id="chartRow"
+        class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginBottom"
+        alignItems="Start">
+
+        <Panel id="linePanel"
+          headerText="Message Volume (Last 24 Hours)"
+          width="60%"
+          class="sapUiTinyMarginEnd"
+          expandable="false">
+          <content>
+            <html:canvas id="lineCanvas"
+              style="width:100%;height:200px;display:block;padding:8px"/>
+          </content>
+        </Panel>
+
+        <Panel id="piePanel"
+          headerText="Status Overview"
+          width="40%"
+          expandable="false">
+          <content>
+            <VBox id="pieBox" alignItems="Center">
+              <html:canvas id="pieCanvas"
+                style="width:220px;height:200px;display:block;margin:8px auto"/>
+              <HBox id="legend" wrap="Wrap"
+                justifyContent="Center"
+                class="sapUiTinyMargin">
+                <HBox id="lg1" alignItems="Center" class="sapUiTinyMarginEnd">
+                  <html:span style="display:inline-block;width:10px;height:10px;background:#27ae60;border-radius:50%;margin-right:4px"/>
+                  <Text id="lt1" text="Completed"/>
+                </HBox>
+                <HBox id="lg2" alignItems="Center" class="sapUiTinyMarginEnd">
+                  <html:span style="display:inline-block;width:10px;height:10px;background:#e74c3c;border-radius:50%;margin-right:4px"/>
+                  <Text id="lt2" text="Failed"/>
+                </HBox>
+                <HBox id="lg3" alignItems="Center" class="sapUiTinyMarginEnd">
+                  <html:span style="display:inline-block;width:10px;height:10px;background:#f39c12;border-radius:50%;margin-right:4px"/>
+                  <Text id="lt3" text="Processing"/>
+                </HBox>
+                <HBox id="lg4" alignItems="Center">
+                  <html:span style="display:inline-block;width:10px;height:10px;background:#3498db;border-radius:50%;margin-right:4px"/>
+                  <Text id="lt4" text="Retry"/>
+                </HBox>
+              </HBox>
+            </VBox>
+          </content>
+        </Panel>
+
+      </HBox>
+
+      <!-- FILTER BAR -->
+      <Toolbar id="filterBar"
+        class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+        <Label id="lbStatus" text="Status:"/>
+        <Select id="statusFilter" change="onFilterChange" width="130px">
+          <items>
+            <core:Item id="iAll"  key="ALL"        text="All"/>
+            <core:Item id="iComp" key="COMPLETED"  text="Completed"/>
+            <core:Item id="iFail" key="FAILED"     text="Failed"/>
+            <core:Item id="iProc" key="PROCESSING" text="Processing"/>
+          </items>
+        </Select>
+        <ToolbarSpacer id="sp1"/>
+        <Label id="lbFlow" text="Flow:"/>
+        <Select id="flowFilter" change="onFilterChange" width="180px">
+          <items>
+            <core:Item id="iAllF" key="" text="All Flows"/>
+          </items>
+        </Select>
+        <ToolbarSpacer id="sp2"/>
+        <SearchField id="searchField" width="200px"
+          search="onSearch" placeholder="Search Message ID..."/>
+      </Toolbar>
+
+      <!-- ERRORS TABLE -->
+      <Panel id="errPanel"
+        headerText="Recent Error Messages"
+        expandable="true"
+        expanded="true"
+        class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginBottom">
+        <content>
+          <Table id="errTable"
+            items="{errors>/}"
+            noDataText="No errors — all good!">
+            <columns>
+              <Column id="ec1" width="20%">
+                <Text id="eh1" text="Integration Flow"/>
+              </Column>
+              <Column id="ec2" width="35%">
+                <Text id="eh2" text="Error Message"/>
+              </Column>
+              <Column id="ec3" width="15%">
+                <Text id="eh3" text="Status"/>
+              </Column>
+              <Column id="ec4" width="15%">
+                <Text id="eh4" text="Start Time"/>
+              </Column>
+              <Column id="ec5" width="15%">
+                <Text id="eh5" text="Action"/>
+              </Column>
+            </columns>
+            <items>
+              <ColumnListItem id="eRow">
+                <cells>
+                  <Text id="eFlow"
+                    text="{errors>IntegrationFlowName}"/>
+                  <Text id="eMsg"
+                    text="{errors>ErrorMessage}"/>
+                  <ObjectStatus id="eStat"
+                    text="{errors>Status}"
+                    state="{path:'errors>Status',
+                      formatter:'.statusToState'}"/>
+                  <Text id="eStart"
+                    text="{path:'errors>LogStart',
+                      formatter:'.formatDateTime'}"/>
+                  <Button id="eBtn"
+                    text="View Details"
+                    type="Emphasized"
+                    press="onErrDetails"/>
+                </cells>
+              </ColumnListItem>
+            </items>
+          </Table>
+        </content>
+      </Panel>
+
+      <!-- MESSAGES TABLE -->
+      <Table id="msgTable"
+        items="{messages>/}"
+        growing="true"
+        growingThreshold="20"
+        noDataText="No messages found"
+        class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+        <headerToolbar>
+          <Toolbar id="tblBar">
+            <Title id="tblTitle"
+              text="Message Processing Logs"
+              level="H4"/>
+            <ToolbarSpacer id="sp3"/>
+            <Button id="exportBtn"
+              icon="sap-icon://excel-attachment"
+              text="Export CSV"
+              press="onExport"/>
+          </Toolbar>
+        </headerToolbar>
+
+        <columns>
+          <Column id="c1" width="15%">
+            <Text id="h1" text="Message ID"/>
+          </Column>
+          <Column id="c2" width="17%">
+            <Text id="h2" text="Integration Flow"/>
+          </Column>
+          <Column id="c3" width="10%">
+            <Text id="h3" text="Status"/>
+          </Column>
+          <Column id="c4" width="12%">
+            <Text id="h4" text="Start Time"/>
+          </Column>
+          <Column id="c5" width="12%">
+            <Text id="h5" text="End Time"/>
+          </Column>
+          <Column id="c6" width="12%">
+            <Text id="h6" text="Sender"/>
+          </Column>
+          <Column id="c7" width="12%">
+            <Text id="h7" text="Receiver"/>
+          </Column>
+          <Column id="c8" width="10%">
+            <Text id="h8" text="Actions"/>
+          </Column>
+        </columns>
+
+        <items>
+          <ColumnListItem id="mRow"
+            type="Navigation"
+            press="onRowPress">
+            <cells>
+              <Link id="mId"
+                text="{messages>MessageGuid}"
+                press="onMsgIdPress"/>
+              <Text id="mFlow"
+                text="{messages>IntegrationFlowName}"/>
+              <ObjectStatus id="mStat"
+                text="{messages>Status}"
+                state="{path:'messages>Status',
+                  formatter:'.statusToState'}"/>
+              <Text id="mStart"
+                text="{path:'messages>LogStart',
+                  formatter:'.formatDateTime'}"/>
+              <Text id="mEnd"
+                text="{path:'messages>LogEnd',
+                  formatter:'.formatDateTime'}"/>
+              <Text id="mSend"  text="{messages>Sender}"/>
+              <Text id="mRecv"  text="{messages>Receiver}"/>
+              <Button id="mBtn"
+                text="View Details"
+                type="Emphasized"
+                press="onViewDetails"/>
+            </cells>
+          </ColumnListItem>
+        </items>
+
+      </Table>
+
+    </content>
+  </Page>
+</mvc:View>
